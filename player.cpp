@@ -8,6 +8,11 @@
 Player::Player(Side side) {
     // Will be set to true in test_minimax.cpp.
     testingMinimax = false;
+    setTimer = 0; // Creates a 30 second limit to the player move. 
+    for(int i = 0; i < 30; i++)
+    {
+    	sleep(1000);
+    }
 
     /* 
      * TODO: Do any initialization you need to do here (setting up the board,
