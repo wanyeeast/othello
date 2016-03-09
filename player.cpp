@@ -8,10 +8,15 @@
 Player::Player(Side side) {
     // Will be set to true in test_minimax.cpp.
     testingMinimax = false;
-    setTimer = 0; // Creates a 30 second limit to the player move. 
-    for(int i = 0; i < 30; i++)
+    Side playerside = side;
+    Side oppside;
+    if(side == WHITE)
     {
-    	sleep(1000);
+    	oppside = BLACK;
+    }
+    else
+    {
+    	oppside = WHITE;
     }
 
     /* 
@@ -44,5 +49,30 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
      */ 
+
+ 	curBoard->doMove(opponentsMove, oppside);
+ 	std::vector<Move> PossibleMoves;
+
+ 	if(curBoard->hasMoves(playerside))
+ 	{
+ 		for (int i = 0; i < 8; i++) 
+ 		{
+	        for (int j = 0; j < 8; j++) 
+	        {
+	            Move move(i, j);
+	            if (checkMove(&move, side)) 
+	            {
+	            	PossibleMoves.pushback(move);
+	            }
+	        }
+	    }
+ 	}	
+
+ 	if((int)PossibleMoves.size() > 0)
+ 	{
+ 		int random = rand() % PossibleMoves.size();
+
+ 		return PossibleMoves[random];
+ 	}
     return NULL;
 }
