@@ -1,4 +1,6 @@
 #include "player.h"
+#include <stdlib.h>  
+#include <vector> 
 /* Test by Wayne */
 /*
  * Constructor for the player; initialize everything here. The side your AI is
@@ -8,15 +10,17 @@
 Player::Player(Side side) {
     // Will be set to true in test_minimax.cpp.
     testingMinimax = false;
-    Side playerside = side;
-    Side oppside;
+
+
+    this->curBoard = new Board();
+    this->playerside = side;
     if(side == WHITE)
     {
-    	oppside = BLACK;
+        this->oppside = BLACK;
     }
     else
     {
-    	oppside = WHITE;
+        this->oppside = WHITE;
     }
 
     /* 
@@ -50,29 +54,29 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * process the opponent's opponents move before calculating your own move
      */ 
 
- 	curBoard->doMove(opponentsMove, oppside);
- 	std::vector<Move> PossibleMoves;
+    this->curBoard->doMove(opponentsMove, this->oppside);
+    vector<Move> PossibleMoves = vector<Move>();
 
- 	if(curBoard->hasMoves(playerside))
- 	{
- 		for (int i = 0; i < 8; i++) 
- 		{
-	        for (int j = 0; j < 8; j++) 
-	        {
-	            Move move(i, j);
-	            if (checkMove(&move, side)) 
-	            {
-	            	PossibleMoves.pushback(move);
-	            }
-	        }
-	    }
- 	}	
+    if(curBoard->hasMoves(playerside))
+    {
+        for (int i = 0; i < 8; i++) 
+        {
+            for (int j = 0; j < 8; j++) 
+            {
+                Move move(i, j);
+                if (this->curBoard->checkMove(&move, this->playerside)) 
+                {
+                    PossibleMoves.push_back(move);
+                }
+            }
+        }
+    }   
 
- 	if((int)PossibleMoves.size() > 0)
- 	{
- 		int random = rand() % PossibleMoves.size();
+    if(PossibleMoves.size() > 0)
+    {
+        int random = rand() % PossibleMoves.size();
 
- 		return PossibleMoves[random];
- 	}
+        return &PossibleMoves[random];
+    }
     return NULL;
 }
