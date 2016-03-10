@@ -15,8 +15,9 @@ public:
     Board * curBoard;
     Side playerside;
     Side oppside;
-    
+
     int score(int i, int j);
+   	int minmaxScore(Board * board, Move * move, Side a, Side b);
     Move *doMove(Move *opponentsMove, int msLeft);
 
     // Flag to tell if the player is running within the test_minimax context
