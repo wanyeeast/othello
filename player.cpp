@@ -87,18 +87,10 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 
     if(testingMinimax == false)
     {
-        std::cerr << "msLeft: " << msLeft << std::endl;
         if(opponentsMove != NULL)
         {
-            cerr << "oppside: " << oppside << endl;
-            cerr << "opp move: " << (int)opponentsMove << endl;
             this->curBoard->doMove(opponentsMove, this->oppside);
         }
-        else
-        {
-            std::cerr << "opponent didn't have a move" << std::endl;
-        }
-        // vector<Move*> PossibleMoves = vector<Move*>();
 
         Move * max = new Move(0, 0);
         int maxScore = -500;
@@ -122,40 +114,19 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
             }
 
             this->curBoard->doMove(max, this->playerside);
-            // PossibleMoves.push_back(move);
             return max;
         }
-
-        // std::cerr << "possible moves: " << PossibleMoves.size() << std::endl;
-        // if(PossibleMoves.size() > 0)
-        // {
-        //     int random = rand() % PossibleMoves.size();
-        //     Move * temp =  PossibleMoves[random];
-            
-        //     this->curBoard->doMove(temp, this->playerside);
-
-        //     return temp;
-        //     delete temp;
-        // }
-        std::cerr << "reach" << std::endl;
         return NULL;
     }
     else
     {   
         if(opponentsMove != NULL)
         {
-            cerr << "oppside: " << oppside << endl;
-            cerr << "opp move: " << (int)opponentsMove << endl;
             this->curBoard->doMove(opponentsMove, this->oppside);
-        }
-        else
-        {
-            std::cerr << "opponent didn't have a move" << std::endl;
         }
         vector<Move*> PossibleMoves = vector<Move*>();
         if(curBoard->hasMoves(playerside))
         {
-            std::cerr << "I can make a move as " << playerside << std::endl;
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
@@ -163,7 +134,6 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
                     Move * move = new Move(i, j);
                     if (this->curBoard->checkMove(move, this->playerside))
                     {
-                        std::cerr << "(x, y): (" << i << ", " << j << ") = " << move << std::endl;
                         PossibleMoves.push_back(move);
                         
                     }
@@ -171,22 +141,15 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
             }
             if(PossibleMoves.size() > 0)
             {
-                std::cerr << "I can make " << (int)PossibleMoves.size() <<" moves" << std::endl;
                 int minmax = -500;
                 Move * bestmove = new Move(0, 0);
                 for(int i = 0; i < (int)PossibleMoves.size(); i++)
-                {   
-
-                    int score = minmaxScore(curBoard, PossibleMoves[i], playerside, oppside);
-                    std::cerr << "Score of " << PossibleMoves[i] << ": " << score << std::endl;
-
-
+                { 
                     Board * testboard = this->curBoard->copy();
                     testboard->doMove(PossibleMoves[i], this->playerside);
                     int testoppscore = 0;
                     if(testboard->hasMoves(oppside))
                     {
-                        std::cerr << "They can make a move as " << oppside << std::endl;
                         vector<Move*> OtherPossibleMoves = vector<Move*>();
                         for (int i = 0; i < 8; i++)
                         {
@@ -195,7 +158,6 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
                                 Move * move = new Move(i, j);
                                 if (testboard->checkMove(move, this->oppside))
                                 {
-                                    std::cerr << "His moves: (x, y): (" << i << ", " << j << ") = " << move << std::endl;
                                     OtherPossibleMoves.push_back(move);
                                     
                                 }
@@ -205,18 +167,15 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
                         for(int i = 0; i < (int)OtherPossibleMoves.size(); i++)
                         {
                             int oppscore = minmaxScore(testboard, OtherPossibleMoves[i], oppside, playerside);
-                            std::cerr << " - Score of " << OtherPossibleMoves[i] << ": " << oppscore << std::endl;
                             if(oppscore > testoppscore)
                             {
                                 testoppscore = oppscore;
                             }
                              
                         }
-                        std::cerr << "---   Lowest score possible: " << ((-1) * testoppscore) << std::endl;
                        
 
                     }
-                    // bestmove = PossibleMoves[0];
                     if((-1) * testoppscore > minmax)
                     {
 
