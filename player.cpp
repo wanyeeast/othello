@@ -48,6 +48,32 @@ Player::~Player() {
  * The move returned must be legal; if there are no valid moves for your side,
  * return NULL.
  */
+
+int Player::score(int i, int j)
+{
+    if((i == 0 || i == 7) && (j == 0 || j == 7))
+    {
+        return 500;
+    }
+    else if((i == 0 && (j == 1 || j == 6)) || ((i == 1 && (j == 0 || j == 7))) || ((i == 6 && (j == 0 || j == 7))) || ((i == 7 && (j ==1 || j == 6))))
+    {
+        return -50;
+    }
+    else if(j == 0 || i == 0)
+    {
+        return 50;
+    }
+    else if((i == 1 || i == 6) && (j == 1 || j == 6))
+    {
+        return -500;
+    }
+    else
+    {
+        return 25;
+    }
+}
+
+
 Move *Player::doMove(Move *opponentsMove, int msLeft) {
     /*
      * TODO: Implement how moves your AI should play here. You should first
@@ -64,7 +90,10 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     {
         std::cerr << "opponent didn't have a move" << std::endl;
     }
-    vector<Move*> PossibleMoves = vector<Move*>();
+    // vector<Move*> PossibleMoves = vector<Move*>();
+
+    Move * max = new Move(0, 0);
+    int maxScore = -500;
     if(curBoard->hasMoves(playerside))
     {
         for (int i = 0; i < 8; i++)
@@ -74,12 +103,19 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
                 Move * move = new Move(i, j);
                 if (this->curBoard->checkMove(move, this->playerside))
                 {
-                    this->curBoard->doMove(move, this->playerside);
-                    // PossibleMoves.push_back(move);
-                    return move;
+                    if(this->score(i, j) > maxScore)
+                    {
+                        maxScore = this->score(i, j);
+                        max = move;
+                    }
+                    
                 }
             }
         }
+
+        this->curBoard->doMove(max, this->playerside);
+        // PossibleMoves.push_back(move);
+        return max;
     }
 
     // std::cerr << "possible moves: " << PossibleMoves.size() << std::endl;
