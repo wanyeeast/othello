@@ -64,40 +64,35 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     {
         std::cerr << "opponent didn't have a move" << std::endl;
     }
-    // vector<pair> Move
-    // std::pair <std::string,double> product1; 
-    vector<Move> PossibleMoves = vector<Move>();
+    vector<Move*> PossibleMoves = vector<Move*>();
     if(curBoard->hasMoves(playerside))
     {
         for (int i = 0; i < 8; i++)
         {
             for (int j = 0; j < 8; j++)
             {
-                Move move(i, j);
-                if (this->curBoard->checkMove(&move, this->playerside))
+                Move * move = new Move(i, j);
+                if (this->curBoard->checkMove(move, this->playerside))
                 {
-                    PossibleMoves.push_back(move);
+                    this->curBoard->doMove(move, this->playerside);
+                    // PossibleMoves.push_back(move);
+                    return move;
                 }
             }
         }
     }
 
-    std::cerr << "possible moves: " << PossibleMoves.size() << std::endl;
-    if(PossibleMoves.size() > 0)
-    {
-        int random = rand() % PossibleMoves.size();
-        for(int i = 0; i < (int)PossibleMoves.size(); i++)
-        {
-            std::cerr << " " << (int)&PossibleMoves[i];
-        }
-        std::cerr << std::endl;
+    // std::cerr << "possible moves: " << PossibleMoves.size() << std::endl;
+    // if(PossibleMoves.size() > 0)
+    // {
+    //     int random = rand() % PossibleMoves.size();
+    //     Move * temp =  PossibleMoves[random];
+        
+    //     this->curBoard->doMove(temp, this->playerside);
 
-        // std::cerr << "msLeft: " << msLeft << std::endl;
-        // Move * temp =  &PossibleMoves[random];
-        // std::cerr << "Move Taken: " << (int)temp << std::endl;
-        this->curBoard->doMove(&PossibleMoves[random], this->playerside);
-        return &PossibleMoves[random];
-    }
+    //     return temp;
+    //     delete temp;
+    // }
     std::cerr << "reach" << std::endl;
     return NULL;
 }
