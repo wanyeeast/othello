@@ -48,35 +48,303 @@ Player::~Player() {
  * The move returned must be legal; if there are no valid moves for your side,
  * return NULL.
  */
+
+int Player::ScoreofBoard(Board * board)
+{
+	int scoretemp; 
+	for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+        	if(board->get(playerside, i, j))
+        	{
+        		scoretemp += score(board, i, j);
+        	}
+        	else if(board->get(oppside, i, j))
+        	{
+        		scoretemp -= score(board, i, j);
+        	}
+        }
+    }
+    return scoretemp;
+}
+
+
 int Player::minmaxScore(Board * board, Move * move, Side a, Side b)
 {
     Board * temp = board->copy();
     temp->doMove(move, a);
     return temp->count(a) - temp->count(b);
 }
-int Player::score(int i, int j)
+int Player::score(Board* board, int i, int j)
 {
     if((i == 0 || i == 7) && (j == 0 || j == 7))
     {
-        return 500;
+        return 5000;
     }
     else if((i == 0 && (j == 1 || j == 6)) || ((i == 1 && (j == 0 || j == 7))) || ((i == 6 && (j == 0 || j == 7))) || ((i == 7 && (j ==1 || j == 6))))
     {
-        return -50;
+    	if (board->get(playerside, 0, 0))
+    	{
+    		if((i == 0 && j == 1) || (i == 1 && j == 0))
+    		{
+    			return 5000;
+    		}
+    	}
+    	else if (board->get(oppside, 0, 0))
+    	{
+    		if((i == 0 && j == 1) || (i == 1 && j == 0))
+    		{
+    			return -5000;
+    		}
+    	}
+    	if (board->get(playerside, 7, 7))
+    	{
+    		if((i == 6 && j == 7) || (i == 7 && j == 6))
+    		{
+    			return 5000;
+    		}
+    	}
+    	else if (board->get(oppside, 7, 7))
+    	{
+    		if((i == 6 && j == 7) || (i == 7 && j == 6))
+    		{
+    			return -5000;
+    		}
+    	}
+    	if (board->get(playerside, 0, 7))
+    	{
+    		if((i == 0 && j == 6) || (i == 1 && j == 7))
+    		{
+    			return 5000;
+    		}
+    	}
+    	else if (board->get(oppside, 0, 7))
+    	{
+    		if((i == 0 && j == 6) || (i == 1 && j == 7))
+    		{
+    			return -5000;
+    		}
+    	}
+    	if (board->get(playerside, 7, 0))
+    	{
+    		if((i == 7 && j == 1) || (i == 6 && j == 0))
+    		{
+    			return 5000;
+    		}
+    	}
+    	else if (board->get(oppside, 7, 0))
+    	{
+    		if((i == 7 && j == 1) || (i == 6 && j == 0))
+    		{
+    			return -5000;
+    		}
+    	}
+        return -25;
     }
     else if(j == 0 || i == 0)
     {
-        return 50;
+        return 100;
     }
     else if((i == 1 || i == 6) && (j == 1 || j == 6))
     {
-        return -500;
+    	if (board->get(playerside, 0, 0))
+    	{
+    		if((i == 0 && j == 1) || (i == 1 && j == 0))
+    		{
+    			return 200;
+    		}
+    	}
+    	else if (board->get(oppside, 0, 0))
+    	{
+    		if((i == 0 && j == 1) || (i == 1 && j == 0))
+    		{
+    			return -200;
+    		}
+    	}
+    	if (board->get(playerside, 7, 7))
+    	{
+    		if((i == 6 && j == 7) || (i == 7 && j == 6))
+    		{
+    			return 200;
+    		}
+    	}
+    	else if (board->get(oppside, 7, 7))
+    	{
+    		if((i == 6 && j == 7) || (i == 7 && j == 6))
+    		{
+    			return -200;
+    		}
+    	}
+    	if (board->get(playerside, 0, 7))
+    	{
+    		if((i == 0 && j == 6) || (i == 1 && j == 7))
+    		{
+    			return 200;
+    		}
+    	}
+    	else if (board->get(oppside, 0, 7))
+    	{
+    		if((i == 0 && j == 6) || (i == 1 && j == 7))
+    		{
+    			return -200;
+    		}
+    	}
+    	if (board->get(playerside, 7, 0))
+    	{
+    		if((i == 7 && j == 1) || (i == 6 && j == 0))
+    		{
+    			return 200;
+    		}
+    	}
+    	else if (board->get(oppside, 7, 0))
+    	{
+    		if((i == 7 && j == 1) || (i == 6 && j == 0))
+    		{
+    			return -200;
+    		}
+    	}
+        return -50;
     }
     else
     {
-        return 25;
+        return 10;
     }
 }
+
+
+int Player::minimax2(Board* board, Side player, int depth, int alpha, int beta)
+{
+	Side opp2;
+	if(player == playerside)
+	{
+		opp2 = oppside;
+	}
+	else
+	{
+		opp2 = playerside;
+	}
+
+	if(!board->hasMoves(player) || depth == 0)
+	{
+        return ScoreofBoard(board);
+	}
+	vector<Move*> PossibleMoves = vector<Move*>();
+	int alpha2 = alpha;
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            Move * move = new Move(i, j);
+            if (board->checkMove(move, this->oppside))
+            {
+                PossibleMoves.push_back(move);
+                
+            }
+            // delete move;
+        }
+    }
+    for(int i = 0; i < (int)PossibleMoves.size(); i++)
+    {   
+    	Board * testboard3 = board->copy();
+    	testboard3->doMove(PossibleMoves[i], player);
+    	int score;
+        if(i != 0)
+        {
+        	score = -minimax2(testboard3, opp2, depth - 1, -alpha2 - 1, -alpha);
+        	if(alpha < score && score < beta)
+        	{
+        		score = -minimax2(testboard3, opp2, depth - 1, -beta, -score);
+        	}
+        }
+        else
+        {
+        	score = -minimax2(testboard3, opp2, depth - 1, -beta, -alpha2);
+        }
+        // delete testboard3;
+        alpha2 = max(alpha2, score);
+        // delete PossibleMoves[i];
+        if(alpha2 >= beta)
+        {
+        	break;
+        }
+
+    }
+
+    return alpha2;
+}
+
+
+
+
+
+
+
+
+Move *Player::BestMoveToDo(Move * PossibleMove, Board * boardTemp)
+{
+    Board * testboard1 = boardTemp->copy();
+    vector<Move*> PossibleMoves = vector<Move*>();
+    if(testboard1->hasMoves(playerside))
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                Move * move = new Move(i, j);
+                if (testboard1->checkMove(move, this->playerside))
+                {
+                    PossibleMoves.push_back(move);
+                    
+                }
+            }
+        }
+        int minmax = -50000000;
+        Move * bestmove = new Move(0, 0);
+        for(int i = 0; i < (int)PossibleMoves.size(); i++)
+        {   
+        	Board * testboard4 = testboard1->copy();
+        	testboard4->doMove(PossibleMoves[i], playerside);
+            int score = minimax2(testboard4, playerside, 4, -50000, 50000);
+            delete testboard4;
+            if(score > minmax)
+            {               
+                bestmove = PossibleMoves[i];
+                minmax = max(minmax, score);
+            }
+        }
+        return bestmove;
+        
+    }   
+    return NULL;    
+}
+
+
+
+Move* Player::BeatsSimplePlayer(Board * board, Move *opponentsMove)
+{
+    Move * max = new Move(0, 0);
+    int maxScore = -500;
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            Move * move = new Move(i, j);
+            if (this->curBoard->checkMove(move, this->playerside))
+            {
+                if(this->score(board, i, j) > maxScore)
+                {
+                    maxScore = this->score(board, i, j);
+                    max = move;
+                }
+                
+            }
+            // delete move;
+        }
+    }
+    return max;
+}
+
 
 
 Move *Player::doMove(Move *opponentsMove, int msLeft) {
@@ -84,156 +352,30 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
      */
-
-    if(testingMinimax == false)
-    {
-        std::cerr << "msLeft: " << msLeft << std::endl;
-        if(opponentsMove != NULL)
+    if(opponentsMove != NULL)
         {
-            cerr << "oppside: " << oppside << endl;
-            cerr << "opp move: " << (int)opponentsMove << endl;
             this->curBoard->doMove(opponentsMove, this->oppside);
         }
-        else
-        {
-            std::cerr << "opponent didn't have a move" << std::endl;
-        }
-        // vector<Move*> PossibleMoves = vector<Move*>();
-
-        Move * max = new Move(0, 0);
-        int maxScore = -500;
+    if(testingMinimax == true)
+    {        
         if(curBoard->hasMoves(playerside))
         {
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    Move * move = new Move(i, j);
-                    if (this->curBoard->checkMove(move, this->playerside))
-                    {
-                        if(this->score(i, j) > maxScore)
-                        {
-                            maxScore = this->score(i, j);
-                            max = move;
-                        }
-                        
-                    }
-                }
-            }
-
+            Move * max = BeatsSimplePlayer(curBoard, opponentsMove);
             this->curBoard->doMove(max, this->playerside);
-            // PossibleMoves.push_back(move);
             return max;
         }
-
-        // std::cerr << "possible moves: " << PossibleMoves.size() << std::endl;
-        // if(PossibleMoves.size() > 0)
-        // {
-        //     int random = rand() % PossibleMoves.size();
-        //     Move * temp =  PossibleMoves[random];
-            
-        //     this->curBoard->doMove(temp, this->playerside);
-
-        //     return temp;
-        //     delete temp;
-        // }
-        std::cerr << "reach" << std::endl;
         return NULL;
     }
     else
     {   
-        if(opponentsMove != NULL)
-        {
-            cerr << "oppside: " << oppside << endl;
-            cerr << "opp move: " << (int)opponentsMove << endl;
-            this->curBoard->doMove(opponentsMove, this->oppside);
-        }
-        else
-        {
-            std::cerr << "opponent didn't have a move" << std::endl;
-        }
-        vector<Move*> PossibleMoves = vector<Move*>();
+
         if(curBoard->hasMoves(playerside))
         {
-            std::cerr << "I can make a move as " << playerside << std::endl;
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    Move * move = new Move(i, j);
-                    if (this->curBoard->checkMove(move, this->playerside))
-                    {
-                        std::cerr << "(x, y): (" << i << ", " << j << ") = " << move << std::endl;
-                        PossibleMoves.push_back(move);
-                        
-                    }
-                }
-            }
-            if(PossibleMoves.size() > 0)
-            {
-                std::cerr << "I can make " << (int)PossibleMoves.size() <<" moves" << std::endl;
-                int minmax = -500;
-                Move * bestmove = new Move(0, 0);
-                for(int i = 0; i < (int)PossibleMoves.size(); i++)
-                {   
-
-                    int score = minmaxScore(curBoard, PossibleMoves[i], playerside, oppside);
-                    std::cerr << "Score of " << PossibleMoves[i] << ": " << score << std::endl;
-
-
-                    Board * testboard = this->curBoard->copy();
-                    testboard->doMove(PossibleMoves[i], this->playerside);
-                    int testoppscore = 0;
-                    if(testboard->hasMoves(oppside))
-                    {
-                        std::cerr << "They can make a move as " << oppside << std::endl;
-                        vector<Move*> OtherPossibleMoves = vector<Move*>();
-                        for (int i = 0; i < 8; i++)
-                        {
-                            for (int j = 0; j < 8; j++)
-                            {
-                                Move * move = new Move(i, j);
-                                if (testboard->checkMove(move, this->oppside))
-                                {
-                                    std::cerr << "His moves: (x, y): (" << i << ", " << j << ") = " << move << std::endl;
-                                    OtherPossibleMoves.push_back(move);
-                                    
-                                }
-                            }
-                        }
-                        
-                        for(int i = 0; i < (int)OtherPossibleMoves.size(); i++)
-                        {
-                            int oppscore = minmaxScore(testboard, OtherPossibleMoves[i], oppside, playerside);
-                            std::cerr << " - Score of " << OtherPossibleMoves[i] << ": " << oppscore << std::endl;
-                            if(oppscore > testoppscore)
-                            {
-                                testoppscore = oppscore;
-                            }
-                             
-                        }
-                        std::cerr << "---   Lowest score possible: " << ((-1) * testoppscore) << std::endl;
-                       
-
-                    }
-                    // bestmove = PossibleMoves[0];
-                    if((-1) * testoppscore > minmax)
-                    {
-
-                       minmax = (-1) * testoppscore; 
-                       bestmove = PossibleMoves[i];
-                    }
-                    
-                }
-
-                this->curBoard->doMove(bestmove, this->playerside);
-                return bestmove;
-            }
-        }   
-        return NULL;    
-            
-
-
+            Move * max = BestMoveToDo(opponentsMove, this->curBoard);
+            this->curBoard->doMove(max, this->playerside);
+            return max;
+        }
+        return NULL;
 
     }
 }

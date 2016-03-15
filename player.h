@@ -16,10 +16,14 @@ public:
     Side playerside;
     Side oppside;
 
-    int score(int i, int j);
+    int score(Board * board, int i, int j);
    	int minmaxScore(Board * board, Move * move, Side a, Side b);
+    int ScoreofBoard(Board * board);
     Move *doMove(Move *opponentsMove, int msLeft);
-
+    Move* BeatsSimplePlayer(Board * board, Move *opponentsMove);
+    int minimax(Move* PossibleMove, int depth, Side player, Board * testB, int alpha, int beta);
+    int minimax2(Board* board, Side player, int depth, int alpha, int beta);
+    Move *BestMoveToDo(Move * PossibleMove, Board * boardTemp);
     // Flag to tell if the player is running within the test_minimax context
     bool testingMinimax;
 };
